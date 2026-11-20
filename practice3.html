@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>실습 ③ 개선 문장 활동지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: 왼쪽은 개선안 1~2개를 쓰는 활동지, 오른쪽은 <표 2> 모양의 결과 카드(넓은 화면에서 고정). 강의 슬라이드 색을 그대로 씁니다. */
+:root {
+  --bg: #f3f6fa; --paper: #ffffff; --ink: #14223a; --muted: #5b6678; --line: #d5dfeb;
+  --navy: #003c82; --sky: #e4eef8; --sky-strong: #9fc5e8; --gap-red: #c0392b; --ok: #1f7a4d;
+  --on-navy: #ffffff; --chip-on: #003c82; --chip-on-ink: #ffffff; --focus: #2f7de1; --warn-bg: #fdf0ee;
+  --font: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1522; --paper: #162133; --ink: #e8eef8; --muted: #9eabc0; --line: #2a3a55;
+    --navy: #8cbcf2; --sky: #1c2c45; --sky-strong: #3a5a86; --gap-red: #f08a7d; --ok: #6fd3a0;
+    --on-navy: #0e1522; --chip-on: #8cbcf2; --chip-on-ink: #0e1522; --focus: #8cbcf2; --warn-bg: #3a2220; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1522; --paper: #162133; --ink: #e8eef8; --muted: #9eabc0; --line: #2a3a55;
+  --navy: #8cbcf2; --sky: #1c2c45; --sky-strong: #3a5a86; --gap-red: #f08a7d; --ok: #6fd3a0;
+  --on-navy: #0e1522; --chip-on: #8cbcf2; --chip-on-ink: #0e1522; --focus: #8cbcf2; --warn-bg: #3a2220; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; border-bottom: 2px solid var(--navy); padding-bottom: 12px; }
+.eyebrow { font-size: 13px; font-weight: 700; color: var(--navy); letter-spacing: .04em; }
+h1 { margin: 2px 0 0; font-size: clamp(24px, 4vw, 34px); font-weight: 900; text-wrap: balance; line-height: 1.25; }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { background: var(--sky); color: var(--navy); font-weight: 700; font-size: 13px; padding: 5px 12px; border-radius: 999px; }
+.notice { margin: 0; font-size: 14px; color: var(--muted); }
+.notice b { color: var(--ink); }
+.formula { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 14px; font-weight: 700; }
+.formula span { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; }
+.formula i { font-style: normal; color: var(--muted); }
+.examples { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+.panel { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.item-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.item-head h2 { margin: 0; font-size: 19px; display: flex; align-items: center; gap: 10px; }
+.badge { background: var(--navy); color: var(--on-navy); font-size: 13px; font-weight: 700; border-radius: 6px; padding: 2px 10px; }
+.badge.two { background: var(--sky-strong); color: var(--ink); }
+.sub { font-size: 13px; color: var(--muted); font-weight: 400; }
+
+label.f { display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px; }
+label.f small, .flabel small { font-weight: 400; color: var(--muted); }
+.flabel { font-weight: 700; font-size: 14px; }
+input[type=text], textarea, select {
+  font: inherit; font-size: 16px; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%;
+}
+textarea { min-height: 64px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+.arrow { font-size: 13px; color: var(--navy); font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.arrow::before { content: "↓"; font-size: 16px; }
+
+.checks { display: flex; flex-wrap: wrap; gap: 6px; font-size: 12px; }
+.checks span { border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; color: var(--muted); }
+.checks span.on { border-color: var(--ok); color: var(--ok); font-weight: 700; }
+.checks em { font-style: normal; color: var(--muted); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: 14px; border: 1px solid var(--sky-strong); background: var(--paper); color: var(--ink); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-ink); border-color: var(--chip-on); }
+.rate { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 12px; align-items: center; }
+.rate .flabel { white-space: nowrap; }
+.warn { background: var(--warn-bg); color: var(--gap-red); border-radius: 8px; padding: 8px 12px; font-size: 14px; font-weight: 700; }
+
+.btn { font: inherit; font-size: 15px; font-weight: 700; border-radius: 8px; padding: 10px 16px; cursor: pointer; border: 1px solid var(--navy); background: var(--navy); color: var(--on-navy); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+.btn.ghost { background: var(--paper); color: var(--navy); }
+.btn.quiet { background: transparent; color: var(--muted); border-color: var(--line); font-weight: 500; }
+.btn.small { font-size: 13px; padding: 6px 12px; }
+.add { border-style: dashed; width: 100%; }
+
+/* 결과 카드 */
+.result { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); display: flex; flex-direction: column; gap: 12px; }
+@media (max-width: 900px) { .result { position: static; } }
+.card { background: var(--paper); border: 2px solid var(--navy); border-radius: 12px; overflow: hidden; }
+.card-head { background: var(--navy); color: var(--on-navy); padding: 12px 18px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-weight: 700; }
+.card-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 16px; }
+.c-lesson { font-size: 14px; color: var(--muted); }
+.c-item { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); padding-top: 14px; }
+.c-item:first-of-type { border-top: 0; padding-top: 0; }
+.c-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.c-lens { font-size: 13px; color: var(--navy); font-weight: 700; }
+.c-score { font-size: 12px; color: var(--muted); }
+.c-row { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 8px; font-size: 14px; }
+.c-row .k { font-size: 12px; font-weight: 700; color: var(--muted); padding-top: 2px; }
+.c-row .v { overflow-wrap: anywhere; white-space: pre-wrap; }
+.c-row .v.soft { color: var(--muted); }
+.c-row .v.fix { font-weight: 700; color: var(--ink); background: var(--sky); border-radius: 6px; padding: 6px 10px; }
+.empty { color: var(--muted); font-size: 14px; }
+.carry { font-size: 13px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 10px; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.status { font-size: 14px; color: var(--navy); min-height: 1.4em; }
+.confirm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; background: var(--sky); padding: 10px 12px; border-radius: 8px; }
+.fallback { width: 100%; min-height: 160px; font-size: 13px; }
+.example-tag { font-size: 12px; background: var(--gap-red); color: var(--paper); border-radius: 4px; padding: 1px 8px; font-weight: 700; }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">모듈 4 · 2차시 · PART 4 활동 4</div>
+      <h1>실습 ③ 성찰 문장을 개선 문장으로</h1>
+    </div>
+    <div class="meta">
+      <span class="pill">개별 3분</span>
+      <span class="pill">결과는 오후 3차시로</span>
+    </div>
+  </header>
+
+  <p class="notice">실습 ②에서 쓴 진단 1~2개를 개선 문장으로 바꾸고 우선순위를 매깁니다. <b>개선 문장 = 무엇을 어떻게 바꾸고, 무엇을 증거로 남길지.</b> ‘AI 도구 하나 더’는 개선이 아닙니다. 다 못 쓰면 1순위 한 문장만 남겨도 됩니다.</p>
+  <div class="formula" aria-label="작성 순서">
+    <span>성찰 결과(소감)</span><i>→</i><span>관찰 근거</span><i>→</i><span>질문</span><i>→</i><span>개선 문장</span>
+  </div>
+
+  <div class="examples">
+    <span>예시 보기:</span>
+    <button class="btn ghost small" type="button" id="exAibot">강사 예시 (AIbot)</button>
+    <button class="btn ghost small" type="button" id="exDust">표준안 예시 (미세먼지)</button>
+    <button class="btn ghost small" type="button" id="fromP1" hidden>실습 ①에서 수업 불러오기</button>
+    <span id="exampleFlag" hidden><span class="example-tag">예시 내용</span> 내 수업으로 고쳐 쓰세요.</span>
+  </div>
+
+  <div class="grid">
+    <form id="sheet" class="stack" autocomplete="off">
+      <section class="panel">
+        <label class="f" for="nick">닉네임 <small>패들렛에 보일 이름</small>
+          <input type="text" id="nick" maxlength="20" placeholder="예: 송정 박쌤">
+        </label>
+        <label class="f" for="lesson">고친 수업 <small>실습 ①·②에서 다룬 수업</small>
+          <input type="text" id="lesson" maxlength="80" placeholder="예: 5학년 실과, 센서로 움직이는 자동차">
+        </label>
+      </section>
+      <div id="items" class="stack"></div>
+      <button class="btn ghost add" type="button" id="addItem">+ 개선안 하나 더 쓰기 (최대 2개)</button>
+    </form>
+
+    <aside class="result" aria-label="완성된 개선 문장 카드">
+      <div class="card">
+        <div class="card-head"><span>실습 ③ 개선 문장</span><span id="cNick">닉네임</span></div>
+        <div class="card-body" id="cBody"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" type="button" id="copyBtn">패들렛용으로 복사</button>
+        <button class="btn ghost" type="button" id="imgBtn">카드 이미지 저장</button>
+        <a class="btn ghost" id="padletBtn" target="_blank" rel="noopener" hidden>패들렛 열기</a>
+        <button class="btn quiet" type="button" id="resetBtn">모두 지우기</button>
+      </div>
+      <div class="confirm" id="confirmBox" hidden>
+        <span>쓴 내용을 모두 지울까요?</span>
+        <button class="btn small" type="button" id="confirmYes">지우기</button>
+        <button class="btn ghost small" type="button" id="confirmNo">취소</button>
+      </div>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+      <textarea class="fallback" id="fallback" hidden aria-label="복사할 내용"></textarea>
+    </aside>
+  </div>
+</div>
+
+<template id="itemTpl">
+  <section class="panel item">
+    <div class="item-head">
+      <h2><span class="badge">개선안 A</span><span class="sub">렌즈 하나를 골라 시작하세요</span></h2>
+      <button class="btn quiet small del" type="button">이 개선안 지우기</button>
+    </div>
+    <label class="f">성찰 렌즈
+      <select data-k="lens">
+        <option value="">고르세요</option>
+        <option>01 교육적 · 목표 달성에 기여했나?</option>
+        <option>02 학습자 · 생각·선택·판단의 기회?</option>
+        <option>03 기술적 · 도구가 수준·환경에 맞았나?</option>
+        <option>04 평가 · 과정을 볼 수 있었나?</option>
+        <option>05 윤리적 · 오류·안전·AI 의존을 다뤘나?</option>
+        <option>06 실행 · 시간·기기·수준을 고려했나?</option>
+      </select>
+    </label>
+    <label class="f">성찰 결과 (소감) <small>처음 떠오른 한 줄</small>
+      <input type="text" data-k="feel" maxlength="60" placeholder="예: 수준 차이가 너무 컸다.">
+    </label>
+    <div class="arrow">근거로 바꾸기</div>
+    <label class="f">관찰 근거 <small>누가·언제·무엇을·얼마나</small>
+      <textarea data-k="evidence" maxlength="200" placeholder="예: 블록 따라 하기에 시간을 다 쓴 학생이 4명 있었다."></textarea>
+    </label>
+    <div class="checks" aria-label="관찰 근거 자동 점검"><em>근거 점검(참고용):</em><span data-c="who">누가</span><span data-c="when">언제</span><span data-c="what">무엇을</span><span data-c="much">얼마나</span></div>
+    <label class="f">질문 <small>이 근거에서 생기는 질문</small>
+      <input type="text" data-k="question" maxlength="80" placeholder="예: 이 학생도 자기 동작을 설계하려면?">
+    </label>
+    <div class="arrow">개선 문장으로</div>
+    <label class="f">무엇을 어떻게 바꾸나요?
+      <textarea data-k="change" maxlength="160" placeholder="예: 완성 코드 카드를 주고 ‘한 관절만 바꾸기’ 미션을 한다"></textarea>
+    </label>
+    <label class="f">무엇을 증거로 남기나요?
+      <input type="text" data-k="proof" maxlength="80" placeholder="예: 바꾼 값과 이유 기록">
+    </label>
+    <div class="warn" hidden data-warn>‘AI 도구를 하나 더 쓰기’는 개선이 아닙니다. 학생의 생각·판단이 어떻게 늘어나는지로 써 보세요.</div>
+    <div class="rate">
+      <span class="flabel">학습 영향</span>
+      <div class="chips" data-g="impact"></div>
+      <span class="flabel">실행 가능성</span>
+      <div class="chips" data-g="feas"></div>
+    </div>
+  </section>
+</template>
+
+<script>
+// 패들렛 주소를 정하면 여기에 넣으세요. 비어 있으면 '패들렛 열기' 버튼이 숨겨집니다.
+const PADLET_URL = "";
+
+const IMPACT = [["매우 큼", 4], ["큼", 3], ["중간", 2], ["작음", 1]];
+const FEAS = [["높음", 3], ["중간", 2], ["낮음", 1]];
+const KEYS = ["lens", "feel", "evidence", "question", "change", "proof"];
+const STORE_KEY = "practice3-draft-v1";
+const P1_KEY = "practice1-draft-v1";
+
+const EXAMPLES = {
+  aibot: {
+    nick: "강사 예시", lesson: "5~6학년 AI 로봇팔 제어 (4차시)",
+    items: [
+      { lens: "02 학습자 · 생각·선택·판단의 기회?", feel: "수준 차이가 너무 컸다.",
+        evidence: "블록 따라 하기에 시간을 다 쓴 학생이 있었고, 그 학생들은 4차시에 자기 동작을 만들지 못했다.",
+        question: "이 학생도 자기 동작을 설계하려면?",
+        change: "완성 코드 카드를 주고 ‘한 관절만 바꾸기’ 미션을 한다", proof: "바꾼 값과 이유 기록", impact: "매우 큼", feas: "높음" },
+      { lens: "03 기술적 · 도구가 수준·환경에 맞았나?", feel: "기기 문제로 시간이 부족했다.",
+        evidence: "2차시에 PC 몇 대에서 AIDesk 카메라가 보이지 않아, 그 자리 학생들은 영상 처리 체험을 하지 못했다.",
+        question: "카메라가 안 되는 학생도 좌표 개념을 확인하려면?",
+        change: "카메라 없이 하는 ‘중심좌표 찾기’ 종이 카드 활동을 대체 활동으로 준비한다", proof: "학생이 표시한 좌표와 그렇게 고른 이유", impact: "중간", feas: "높음" },
+    ],
+  },
+  dust: {
+    nick: "표준안 예시", lesson: "학교 공기질 스마트 측정 프로젝트",
+    items: [
+      { lens: "02 학습자 · 생각·선택·판단의 기회?", feel: "학생들이 시키는 대로만 측정했다.",
+        evidence: "모든 모둠이 교사가 정한 같은 장소·시간에 측정했고, 학생이 질문·비교 조건을 정한 기록이 없다.",
+        question: "학생이 측정할 질문을 직접 만들게 하려면?",
+        change: "학생이 장소·시간·활동을 골라 질문과 측정 계획을 만들게 한다", proof: "질문 생성 기록과 측정 계획표(선택 이유 포함)", impact: "매우 큼", feas: "높음" },
+      { lens: "04 평가 · 과정을 볼 수 있었나?", feel: "학생 참여가 부족했다.",
+        evidence: "6개 모둠 중 4개 모둠이 AI 제안 코드를 그대로 사용했고, 오류 난 3개 모둠은 교사가 대신 고쳤다.",
+        question: "어떤 기록이 있어야 검토하게 될까?",
+        change: "AI 제안 코드를 쓸 때 채택·수정·기각 이유를 따로 남기게 한다", proof: "채택·수정·기각 이유와 검증 결과 기록", impact: "큼", feas: "높음" },
+    ],
+  },
+};
+
+const $ = (id) => document.getElementById(id);
+const state = { items: [], swap: false, example: false };
+const blankItem = () => ({ lens: "", feel: "", evidence: "", question: "", change: "", proof: "", impact: "", feas: "" });
+
+// ---------- 한국어 조사 ----------
+function eul(word) {
+  const s = (word || "").trim(); if (!s) return "을/를";
+  const c = s.charCodeAt(s.length - 1);
+  if (c < 0xac00 || c > 0xd7a3) return "을/를";
+  return (c - 0xac00) % 28 === 0 ? "를" : "을";
+}
+function fixSentence(it) {
+  const change = (it.change || "").trim().replace(/[.。]\s*$/, "");
+  const proof = (it.proof || "").trim();
+  if (!change && !proof) return "";
+  const a = change ? change + "." : "";
+  const b = proof ? ` ${proof}${eul(proof)} 증거로 남긴다.` : "";
+  return (a + b).trim();
+}
+
+// ---------- 근거 점검(참고용) ----------
+function evidenceChecks(t) {
+  t = t || "";
+  return {
+    who: /(학생|모둠|명|아이|팀|교사|우리 반)/.test(t),
+    when: /(차시|시간|직후|중에|처음|마지막|끝|때|도입|활동|분 동안|시작)/.test(t),
+    what: t.replace(/\s/g, "").length >= 12,
+    much: /(\d|한 명|두 명|세 명|절반|대부분|모든|몇|일부|%|개 모둠)/.test(t),
+  };
+}
+const AI_MORE = /((AI|에이아이|인공지능|앱|도구|툴|프로그램).{0,8}(하나 더|추가|더 쓰|더 사용|새로 쓰|바꾼다|바꾸기|도입))/;
+
+// ---------- 화면 만들기 ----------
+function scoreOf(it) {
+  const i = IMPACT.find((x) => x[0] === it.impact), f = FEAS.find((x) => x[0] === it.feas);
+  return i && f ? i[1] * f[1] : 0;
+}
+function order() {
+  const idx = state.items.map((_, i) => i);
+  if (idx.length < 2) return idx;
+  const auto = scoreOf(state.items[1]) > scoreOf(state.items[0]) ? [1, 0] : [0, 1];
+  return state.swap ? auto.reverse() : auto;
+}
+
+function renderItems() {
+  const box = $("items"); box.textContent = "";
+  const tpl = $("itemTpl");
+  state.items.forEach((it, i) => {
+    const node = tpl.content.firstElementChild.cloneNode(true);
+    node.querySelector(".badge").textContent = "개선안 " + "AB"[i];
+    if (i === 1) node.querySelector(".badge").classList.add("two");
+    node.querySelector(".sub").textContent = i === 0 ? "가장 고치고 싶은 진단부터" : "선택: 두 번째 진단";
+    node.querySelector(".del").hidden = state.items.length === 1;
+    node.querySelector(".del").addEventListener("click", () => { state.items.splice(i, 1); state.swap = false; renderItems(); update(); });
+    KEYS.forEach((k) => {
+      const el = node.querySelector(`[data-k="${k}"]`);
+      el.id = `i${i}-${k}`;
+      el.value = it[k] || "";
+      el.addEventListener("input", () => { it[k] = el.value; state.example = false; paintItem(node, it); update(); });
+      if (el.tagName === "SELECT") el.addEventListener("change", () => { it[k] = el.value; state.example = false; update(); });
+    });
+    [["impact", IMPACT], ["feas", FEAS]].forEach(([g, opts]) => {
+      const cbox = node.querySelector(`[data-g="${g}"]`);
+      opts.forEach(([label]) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "chip"; b.textContent = label;
+        b.setAttribute("aria-pressed", String(it[g] === label));
+        b.addEventListener("click", () => {
+          it[g] = it[g] === label ? "" : label; state.example = false;
+          cbox.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(it[g] === c.textContent)));
+          update();
+        });
+        cbox.appendChild(b);
+      });
+    });
+    paintItem(node, it);
+    box.appendChild(node);
+  });
+  $("addItem").hidden = state.items.length >= 2;
+}
+function paintItem(node, it) {
+  const c = evidenceChecks(it.evidence);
+  node.querySelectorAll("[data-c]").forEach((s) => s.classList.toggle("on", !!c[s.dataset.c]));
+  node.querySelector("[data-warn]").hidden = !AI_MORE.test((it.change || "") + " " + (it.proof || ""));
+}
+
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function row(k, v, cls) { const r = el("div", "c-row"); r.append(el("div", "k", k), el("div", "v " + (cls || ""), v)); return r; }
+
+function update() {
+  const nick = $("nick").value.trim(), lesson = $("lesson").value.trim();
+  $("cNick").textContent = nick || "닉네임";
+  const body = $("cBody"); body.textContent = "";
+  body.appendChild(el("div", "c-lesson", lesson ? "고친 수업: " + lesson : "고친 수업: —"));
+  const ord = order();
+  const filled = ord.filter((i) => Object.values(state.items[i]).some((v) => (v || "").trim()));
+  if (!filled.length) body.appendChild(el("p", "empty", "왼쪽을 채우면 여기에 <표 2> 모양으로 정리됩니다."));
+  ord.forEach((i, rank) => {
+    const it = state.items[i];
+    if (!Object.values(it).some((v) => (v || "").trim())) return;
+    const wrap = el("div", "c-item");
+    const top = el("div", "c-top");
+    const b = el("span", "badge" + (rank === 1 ? " two" : ""), (rank + 1) + "순위");
+    top.append(b, el("span", "c-lens", it.lens || "렌즈 미선택"));
+    if (it.impact || it.feas) top.append(el("span", "c-score", `영향 ${it.impact || "?"} · 실행 ${it.feas || "?"}`));
+    wrap.append(top);
+    wrap.append(row("소감", it.feel || "—", "soft"));
+    wrap.append(row("관찰 근거", it.evidence || "—"));
+    wrap.append(row("질문", it.question ? "→ " + it.question : "—", "soft"));
+    wrap.append(row("개선 문장", fixSentence(it) || "—", "fix"));
+    body.appendChild(wrap);
+  });
+  if (state.items.length === 2 && filled.length === 2) {
+    const sw = el("button", "btn quiet small", "1·2순위 바꾸기");
+    sw.type = "button";
+    sw.addEventListener("click", () => { state.swap = !state.swap; update(); });
+    body.appendChild(sw);
+  }
+  body.appendChild(el("div", "carry", "오후 3차시에 가져갈 것: 개선할 문제 1개 · 그 관찰 근거 · 개선 문장 1~2순위"));
+  $("exampleFlag").hidden = !state.example;
+  save();
+}
+
+function plainText() {
+  const lines = [`[실습 ③] ${$("nick").value.trim() || "닉네임"}${state.example ? " (예시)" : ""}`, `■ 고친 수업: ${$("lesson").value.trim() || "-"}`];
+  order().forEach((i, rank) => {
+    const it = state.items[i];
+    if (!Object.values(it).some((v) => (v || "").trim())) return;
+    lines.push("", `【${rank + 1}순위】 ${it.lens || "렌즈 미선택"}${it.impact || it.feas ? ` (영향 ${it.impact || "?"} · 실행 ${it.feas || "?"})` : ""}`);
+    lines.push(`- 소감: ${it.feel || "-"}`, `- 관찰 근거: ${it.evidence || "-"}`, `- 질문: ${it.question || "-"}`, `- 개선 문장: ${fixSentence(it) || "-"}`);
+  });
+  return lines.join("\n");
+}
+
+// ---------- 저장 ----------
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify({ nick: $("nick").value, lesson: $("lesson").value, items: state.items, swap: state.swap, example: state.example })); } catch (e) {}
+}
+function apply(data) {
+  $("nick").value = data.nick || ""; $("lesson").value = data.lesson || "";
+  state.items = (data.items && data.items.length ? data.items : [blankItem()]).map((x) => ({ ...blankItem(), ...x }));
+  state.swap = !!data.swap; state.example = !!data.example;
+  renderItems(); update();
+}
+function load() {
+  try { const raw = localStorage.getItem(STORE_KEY); apply(raw ? JSON.parse(raw) : {}); } catch (e) { apply({}); }
+  try {
+    const p1 = JSON.parse(localStorage.getItem(P1_KEY) || "null");
+    if (p1 && (p1.lesson || p1.nick) && !p1.example) {
+      $("fromP1").hidden = false;
+      $("fromP1").addEventListener("click", () => {
+        if (p1.nick) $("nick").value = p1.nick;
+        if (p1.lesson) $("lesson").value = p1.lesson;
+        state.example = false; update(); flash("실습 ①에서 쓴 닉네임과 수업을 불러왔습니다.");
+      });
+    }
+  } catch (e) {}
+}
+
+["nick", "lesson"].forEach((id) => $(id).addEventListener("input", () => { state.example = false; update(); }));
+$("sheet").addEventListener("submit", (e) => e.preventDefault());
+$("addItem").addEventListener("click", () => { if (state.items.length < 2) { state.items.push(blankItem()); renderItems(); update(); document.getElementById("i1-lens").focus(); } });
+$("exAibot").addEventListener("click", () => { apply({ ...structuredClone(EXAMPLES.aibot), example: true }); flash("강사 예시를 채웠습니다. 내 수업으로 고쳐 쓰세요."); });
+$("exDust").addEventListener("click", () => { apply({ ...structuredClone(EXAMPLES.dust), example: true }); flash("표준안 예시를 채웠습니다. 이 사례로 실습해도 됩니다."); });
+
+let flashTimer;
+function flash(msg) { $("status").textContent = msg; clearTimeout(flashTimer); flashTimer = setTimeout(() => ($("status").textContent = ""), 5000); }
+
+$("copyBtn").addEventListener("click", () => {
+  const text = plainText(), fb = $("fallback");
+  const showFallback = () => { fb.hidden = false; fb.value = text; fb.focus(); fb.select(); flash("자동 복사가 막혀 있습니다. 아래 글이 선택되어 있으니 Ctrl+C(또는 길게 눌러 복사)로 복사하세요."); };
+  try { navigator.clipboard.writeText(text).then(() => { fb.hidden = true; flash("복사했습니다. 패들렛 새 게시물에 붙여넣으세요."); }, showFallback); }
+  catch (e) { showFallback(); }
+});
+$("resetBtn").addEventListener("click", () => { $("confirmBox").hidden = false; $("confirmNo").focus(); });
+$("confirmNo").addEventListener("click", () => { $("confirmBox").hidden = true; });
+$("confirmYes").addEventListener("click", () => { $("confirmBox").hidden = true; $("fallback").hidden = true; apply({}); flash("모두 지웠습니다."); });
+if (PADLET_URL) { $("padletBtn").href = PADLET_URL; $("padletBtn").hidden = false; }
+
+// ---------- 카드 이미지 ----------
+function wrapLines(ctx, text, maxW) {
+  const out = [];
+  String(text).split("\n").forEach((para) => {
+    let line = "";
+    for (const ch of para) {
+      if (ctx.measureText(line + ch).width > maxW && line) { out.push(line); line = ch.trimStart(); }
+      else line += ch;
+    }
+    out.push(line);
+  });
+  return out;
+}
+async function drawCard() {
+  try { await document.fonts.ready; } catch (e) {}
+  const W = 1080, P = 60, inner = W - P * 2, font = '"Noto Sans KR", "Malgun Gothic", sans-serif';
+  const navy = "#003c82", sky = "#e4eef8", ink = "#14223a", muted = "#5b6678";
+  const blocks = [];
+  order().forEach((i, rank) => {
+    const it = state.items[i];
+    if (!Object.values(it).some((v) => (v || "").trim())) return;
+    blocks.push({ rank: rank + 1, lens: it.lens || "렌즈 미선택", rows: [["소감", it.feel || "-", muted, 500], ["관찰 근거", it.evidence || "-", ink, 500], ["질문", it.question ? "→ " + it.question : "-", muted, 500], ["개선 문장", fixSentence(it) || "-", ink, 700]] });
+  });
+  const m = document.createElement("canvas").getContext("2d");
+  const KW = 170, VW = inner - KW;
+  let h = 120 + 30 + 50;
+  blocks.forEach((b) => {
+    h += 60;
+    b.rows.forEach((r) => { m.font = `${r[3]} 30px ${font}`; r.lines = wrapLines(m, r[1], VW - (r[0] === "개선 문장" ? 24 : 0)); h += r.lines.length * 44 + 22 + (r[0] === "개선 문장" ? 20 : 0); });
+    h += 24;
+  });
+  h += 70 + P;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = Math.ceil(h);
+  const c = cv.getContext("2d");
+  c.fillStyle = "#fff"; c.fillRect(0, 0, W, h);
+  c.fillStyle = navy; c.fillRect(0, 0, W, 120);
+  c.fillStyle = "#fff"; c.textBaseline = "middle";
+  c.font = `700 40px ${font}`; c.fillText("실습 ③ 개선 문장", P, 60);
+  c.font = `500 32px ${font}`; c.textAlign = "right"; c.fillText(($("nick").value.trim() || "닉네임") + (state.example ? " (예시)" : ""), W - P, 60);
+  c.textAlign = "left"; c.textBaseline = "top";
+  let y = 150;
+  c.fillStyle = muted; c.font = `500 28px ${font}`; c.fillText("고친 수업: " + ($("lesson").value.trim() || "-"), P, y); y += 50;
+  blocks.forEach((b) => {
+    c.fillStyle = navy; c.fillRect(P, y, 120, 44);
+    c.fillStyle = "#fff"; c.font = `700 26px ${font}`; c.fillText(b.rank + "순위", P + 22, y + 7);
+    c.fillStyle = navy; c.font = `700 26px ${font}`; c.fillText(b.lens, P + 140, y + 7);
+    y += 60;
+    b.rows.forEach((r) => {
+      const isFix = r[0] === "개선 문장";
+      c.fillStyle = muted; c.font = `700 24px ${font}`; c.fillText(r[0], P, y + 4);
+      if (isFix) { c.fillStyle = sky; c.fillRect(P + KW - 12, y - 8, VW + 12, r.lines.length * 44 + 20); }
+      c.fillStyle = r[2]; c.font = `${r[3]} 30px ${font}`;
+      r.lines.forEach((l, k) => c.fillText(l, P + KW + (isFix ? 0 : 0), y + k * 44));
+      y += r.lines.length * 44 + 22 + (isFix ? 20 : 0);
+    });
+    y += 24;
+  });
+  c.fillStyle = muted; c.font = `500 24px ${font}`;
+  c.fillText("오후 3차시에 가져갈 것: 개선할 문제 1개 · 관찰 근거 · 개선 문장 1~2순위", P, y + 10);
+  c.strokeStyle = navy; c.lineWidth = 6; c.strokeRect(3, 3, W - 6, h - 6);
+  return new Promise((res) => cv.toBlob(res, "image/png"));
+}
+async function saveImage(blob, filename) {
+  // claude.ai 안에서 열었을 때는 그쪽 저장 기능을, 그 밖(깃허브 등)에서는 일반 다운로드를 씁니다.
+  if (window.claude && typeof window.claude.use === "function") {
+    try { const dl = await window.claude.use("downloads"); if (dl) { await dl.save({ filename, data: blob }); return; } } catch (e) { if (e && e.code === "declined") throw e; }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+$("imgBtn").addEventListener("click", async () => {
+  try {
+    const blob = await drawCard();
+    await saveImage(blob, "실습3_" + ($("nick").value.trim() || "개선문장").replace(/[\\/:*?"<>|]/g, "") + ".png");
+    flash("이미지를 저장했습니다. 패들렛 게시물에 첨부하세요.");
+  } catch (e) {
+    flash(e && e.code === "declined" ? "저장을 취소했습니다." : "이미지를 저장하지 못했습니다. 카드를 화면 캡처해 올려 주세요.");
+  }
+});
+
+load();
+</script>
+</body>
+</html>

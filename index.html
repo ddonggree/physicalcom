@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>모듈 4 웹 활동지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap">
+<style>
+:root { --bg: #f3f6fa; --paper: #ffffff; --ink: #14223a; --muted: #5b6678; --line: #d5dfeb; --navy: #003c82; --sky: #e4eef8; --focus: #2f7de1; color-scheme: light; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0e1522; --paper: #162133; --ink: #e8eef8; --muted: #9eabc0; --line: #2a3a55; --navy: #8cbcf2; --sky: #1c2c45; --focus: #8cbcf2; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #0e1522; --paper: #162133; --ink: #e8eef8; --muted: #9eabc0; --line: #2a3a55; --navy: #8cbcf2; --sky: #1c2c45; --focus: #8cbcf2; color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 48px; }
+main { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.eyebrow { font-size: 13px; font-weight: 700; color: var(--navy); }
+h1 { margin: 0; font-size: clamp(24px, 5vw, 32px); font-weight: 900; text-wrap: balance; }
+p { margin: 0; color: var(--muted); }
+a.item { display: flex; gap: 16px; align-items: center; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; color: var(--ink); text-decoration: none; }
+a.item:hover { border-color: var(--navy); }
+a.item:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.n { flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--navy); color: var(--paper); display: grid; place-items: center; font-weight: 900; font-size: 22px; }
+.t { font-weight: 700; font-size: 18px; }
+.s { font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">AIEDAP 마스터교원 신규연수 · 모듈 4</div>
+  <h1>웹 활동지</h1>
+  <p>강사가 안내하는 실습을 눌러 시작하세요. 작성한 내용은 복사해서 패들렛에 올립니다.</p>
+  <a class="item" href="practice1.html">
+    <span class="n">①</span>
+    <span><span class="t">실습 ① 내 수업의 평가 증거 성찰</span><br><span class="s">1차시 · 개별 8분 · 놓친 증거 찾고 수집 계획 세우기</span></span>
+  </a>
+  <a class="item" href="practice3.html">
+    <span class="n">③</span>
+    <span><span class="t">실습 ③ 성찰 문장을 개선 문장으로</span><br><span class="s">2차시 · 개별 3분 · 개선 문장 1~2순위 정하기</span></span>
+  </a>
+</main>
+</body>
+</html>
