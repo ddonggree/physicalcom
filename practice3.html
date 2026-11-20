@@ -38,6 +38,8 @@ body {
 .wrap { max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
 header.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; border-bottom: 2px solid var(--navy); padding-bottom: 12px; }
 .eyebrow { font-size: 13px; font-weight: 700; color: var(--navy); letter-spacing: .04em; }
+a.home { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 700; color: var(--navy); text-decoration: none; background: var(--paper); border: 1px solid var(--sky-strong); border-radius: 999px; padding: 6px 14px; margin-bottom: -8px; }
+a.home:hover { border-color: var(--navy); }
 h1 { margin: 2px 0 0; font-size: clamp(24px, 4vw, 34px); font-weight: 900; text-wrap: balance; line-height: 1.25; }
 .meta { display: flex; flex-wrap: wrap; gap: 8px; }
 .pill { background: var(--sky); color: var(--navy); font-weight: 700; font-size: 13px; padding: 5px 12px; border-radius: 999px; }
@@ -121,6 +123,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-
 </head>
 <body>
 <div class="wrap">
+  <a class="home" href="index.html">🏠 처음 화면</a>
   <header class="top">
     <div>
       <div class="eyebrow">모듈 4 · 2차시 · PART 4 활동 4</div>
