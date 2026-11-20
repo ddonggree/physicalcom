@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>모듈 3 토론 노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* 모듈 3 두 시간 동안 계속 쓰는 한 장짜리 토론 노트. 단계마다 [복사] 버튼, 맨 아래에 처음·나중 점수를 나란히 보여 주는 정리 카드. */
+:root {
+  --bg: #f3f6fa; --paper: #ffffff; --ink: #14223a; --muted: #5b6678; --line: #d5dfeb;
+  --navy: #003c82; --sky: #e4eef8; --sky-strong: #9fc5e8; --red: #c0392b; --on-navy: #ffffff;
+  --pro: #003c82; --con: #c0392b; --focus: #2f7de1;
+  --font: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1522; --paper: #162133; --ink: #e8eef8; --muted: #9eabc0; --line: #2a3a55;
+    --navy: #8cbcf2; --sky: #1c2c45; --sky-strong: #3a5a86; --red: #f08a7d; --on-navy: #0e1522;
+    --pro: #8cbcf2; --con: #f08a7d; --focus: #8cbcf2; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1522; --paper: #162133; --ink: #e8eef8; --muted: #9eabc0; --line: #2a3a55;
+  --navy: #8cbcf2; --sky: #1c2c45; --sky-strong: #3a5a86; --red: #f08a7d; --on-navy: #0e1522;
+  --pro: #8cbcf2; --con: #f08a7d; --focus: #8cbcf2; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+html { scroll-padding-top: 72px; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 56px;
+}
+.wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+header.top { border-bottom: 2px solid var(--navy); padding-bottom: 12px; }
+.eyebrow { font-size: 13px; font-weight: 700; color: var(--navy); letter-spacing: .04em; }
+h1 { margin: 2px 0 0; font-size: clamp(24px, 4.5vw, 34px); font-weight: 900; line-height: 1.25; text-wrap: balance; }
+.notice { margin: 0; font-size: 14px; color: var(--muted); }
+.notice b { color: var(--red); }
+
+nav.steps { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 8px 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: thin; }
+nav.steps a { flex: none; text-decoration: none; font-size: 13px; font-weight: 700; color: var(--navy); background: var(--paper); border: 1px solid var(--sky-strong); border-radius: 999px; padding: 5px 12px; white-space: nowrap; }
+nav.steps a.done { background: var(--navy); color: var(--on-navy); border-color: var(--navy); }
+
+.step { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.step-head { display: flex; gap: 12px; align-items: flex-start; }
+.num { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: var(--on-navy); display: grid; place-items: center; font-weight: 900; font-size: 19px; }
+.step-head h2 { margin: 0; font-size: 19px; font-weight: 700; line-height: 1.35; }
+.step-head p { margin: 2px 0 0; font-size: 14px; color: var(--muted); }
+.when { display: inline-block; font-size: 12px; font-weight: 700; color: var(--navy); background: var(--sky); border-radius: 999px; padding: 1px 10px; margin-left: 6px; vertical-align: 2px; }
+
+label.f, .f { display: flex; flex-direction: column; gap: 6px; font-weight: 700; font-size: 14px; }
+.f small, label.f small { font-weight: 400; color: var(--muted); }
+input[type=text], textarea, select {
+  font: inherit; font-size: 16px; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%;
+}
+textarea { min-height: 76px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: 14px; border: 1px solid var(--sky-strong); background: var(--paper); color: var(--ink); border-radius: 999px; padding: 6px 14px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--navy); color: var(--on-navy); border-color: var(--navy); }
+.chip.pro[aria-pressed="true"] { background: var(--pro); border-color: var(--pro); }
+.chip.con[aria-pressed="true"] { background: var(--con); border-color: var(--con); color: #fff; }
+
+.scores { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px; }
+.score { font: inherit; font-weight: 900; font-size: 18px; height: 48px; border-radius: 10px; border: 1px solid var(--sky-strong); background: var(--paper); color: var(--ink); cursor: pointer; }
+.score[aria-pressed="true"] { background: var(--navy); color: var(--on-navy); border-color: var(--navy); }
+.scale { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+
+.qbox { background: var(--sky); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.qbox p { margin: 0; }
+.qbox b { color: var(--navy); }
+
+.ev-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 640px) { .ev-grid { grid-template-columns: minmax(0, 1fr); } }
+.ev { font: inherit; text-align: left; cursor: pointer; border: 1px solid var(--line); border-left: 5px solid var(--pro); border-radius: 10px; background: var(--paper); color: var(--ink); padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.ev.con { border-left-color: var(--con); }
+.ev .iss { font-size: 12px; font-weight: 700; color: var(--muted); }
+.ev .sh { font-weight: 700; font-size: 15px; line-height: 1.4; }
+.ev .fu { font-size: 13px; color: var(--muted); line-height: 1.45; }
+.ev[aria-pressed="true"] { background: var(--sky); border-color: var(--navy); box-shadow: inset 0 0 0 1px var(--navy); }
+.ev.con[aria-pressed="true"] { border-color: var(--con); box-shadow: inset 0 0 0 1px var(--con); }
+.ev-empty { font-size: 14px; color: var(--muted); }
+.side-tag { display: inline-block; font-size: 11px; font-weight: 700; color: #fff; background: var(--pro); border-radius: 4px; padding: 0 6px; margin-right: 4px; }
+.side-tag.con { background: var(--con); }
+
+details.table1 { border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 14px; }
+details.table1 summary { cursor: pointer; font-weight: 700; color: var(--navy); }
+.t1 { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+.t1 th, .t1 td { border: 1px solid var(--line); padding: 6px 8px; vertical-align: top; text-align: left; }
+.t1 th { background: var(--navy); color: var(--on-navy); }
+.t1 td:first-child { font-weight: 700; color: var(--navy); white-space: nowrap; }
+.t1-scroll { overflow-x: auto; }
+
+.frames { background: var(--sky); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; }
+.frames p { margin: 0; overflow-wrap: anywhere; }
+.blank { color: var(--muted); border-bottom: 1px solid var(--muted); padding: 0 6px; }
+.fill { font-weight: 700; }
+
+.row-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn { font: inherit; font-size: 15px; font-weight: 700; border-radius: 8px; padding: 9px 16px; cursor: pointer; border: 1px solid var(--navy); background: var(--navy); color: var(--on-navy); text-decoration: none; display: inline-flex; align-items: center; }
+.btn.ghost { background: var(--paper); color: var(--navy); }
+.btn.quiet { background: transparent; color: var(--muted); border-color: var(--line); font-weight: 500; }
+.btn.small { font-size: 14px; padding: 6px 12px; }
+.hint { font-size: 13px; color: var(--muted); margin: 0; }
+
+.compare { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--sky); border-radius: 10px; padding: 12px 16px; }
+.compare .big { font-size: 34px; font-weight: 900; color: var(--navy); line-height: 1; }
+.compare .lab { font-size: 12px; color: var(--muted); font-weight: 700; }
+.compare .arrow { font-size: 24px; color: var(--muted); }
+.compare .delta { font-weight: 700; }
+
+.card { background: var(--paper); border: 2px solid var(--navy); border-radius: 12px; overflow: hidden; }
+.card-head { background: var(--navy); color: var(--on-navy); padding: 12px 18px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-weight: 700; }
+.card-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+.row-k { font-size: 12px; font-weight: 700; color: var(--navy); letter-spacing: .04em; }
+.row-v { font-size: 15px; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.status { position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--paper); font-size: 14px; padding: 10px 16px; border-radius: 10px; max-width: calc(100vw - 32px); z-index: 10; }
+.confirm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 14px; background: var(--sky); padding: 10px 12px; border-radius: 8px; }
+.fallback { width: 100%; min-height: 160px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">AIEDAP 마스터교원 신규연수 · 모듈 3 · 피지컬 AI 윤리 토론</div>
+    <h1>로봇 택시 토론 노트</h1>
+  </header>
+
+  <p class="notice">두 시간 동안 이 페이지 하나를 계속 씁니다. 강사가 안내할 때마다 해당 칸을 채우고 <b>[복사]</b>를 눌러 패들렛에 붙여넣으세요. 쓴 내용은 이 기기 브라우저에만 임시 저장되니, <b>같은 기기·같은 브라우저</b>로 계속 열어 주세요.</p>
+
+  <label class="f" for="nick">닉네임 <small>패들렛에 보일 이름 (실명이 아니어도 됩니다)</small>
+    <input type="text" id="nick" data-k="nick" maxlength="20" placeholder="예: 송정 박쌤">
+  </label>
+
+  <nav class="steps" aria-label="단계 바로 가기">
+    <a href="#s1" data-s="1">① 처음 점수</a>
+    <a href="#s2" data-s="2">② 내 입장</a>
+    <a href="#s3" data-s="3">③ 모둠 결론</a>
+    <a href="#s4" data-s="4">④ 1차시 한 줄</a>
+    <a href="#s5" data-s="5">⑤ 토론 주제</a>
+    <a href="#s6" data-s="6">⑥ 근거 카드</a>
+    <a href="#s7" data-s="7">⑦ 다시 점수</a>
+    <a href="#sum" data-s="0">정리</a>
+  </nav>
+
+  <!-- ① 처음 점수 -->
+  <section class="step" id="s1">
+    <div class="step-head"><div class="num">①</div><div>
+      <h2>로봇 택시에 타시겠습니까? <span class="when">1차시 도입</span></h2>
+      <p>운전석에 사람이 없는 로봇 택시가 학교 앞에 도착했습니다. 오늘 퇴근길, 타시겠습니까?</p>
+    </div></div>
+    <div class="f"><span>처음 점수 <small>0 = 절대 안 탄다 · 10 = 망설임 없이 탄다</small></span>
+      <div class="scores" id="score1" role="group" aria-label="처음 점수"></div>
+      <div class="scale"><span>0 절대 안 탄다</span><span>10 망설임 없이 탄다</span></div>
+    </div>
+    <label class="f" for="reason1">그렇게 준 이유 한 마디
+      <input type="text" id="reason1" data-k="reason1" maxlength="80" placeholder="예: 사고 나면 누가 책임지는지 모르겠다">
+    </label>
+    <div class="row-actions"><button class="btn small" type="button" data-copy="1">복사</button><span class="hint">두 시간 뒤 ⑦에서 이 점수와 나란히 비교합니다.</span></div>
+  </section>
+
+  <!-- ② 내 입장 -->
+  <section class="step" id="s2">
+    <div class="step-head"><div class="num">②</div><div>
+      <h2>근거를 보고 입장 정하기 <span class="when">1차시 활동 3</span></h2>
+      <p>&lt;표 1&gt;에서 내 입장을 뒷받침하는 근거를 하나 고르고, 1인 1분으로 입장·근거·걱정되는 점을 말합니다.</p>
+    </div></div>
+    <div class="qbox" id="qbox"></div>
+    <div class="f"><span>지금 이야기하는 질문</span><div class="chips" id="qChips"></div></div>
+    <details class="table1">
+      <summary>&lt;표 1&gt; 피지컬 AI 수용에 대한 찬성·반대 근거 전체 보기</summary>
+      <div class="t1-scroll"><table class="t1" id="t1"></table></div>
+      <p class="hint" style="margin-top:8px">찬성은 ‘기술적 성능’을, 반대는 ‘검증 조건과 도덕적 권한’을 말한다. 두 주장의 결론은 나지 않는다. 그래서 딜레마다.</p>
+    </details>
+    <div class="f"><span>내 입장</span><div class="chips" id="stanceChips"></div></div>
+    <div class="f"><span>내 입장을 뒷받침하는 근거 1개 <small>입장을 먼저 고르면 그쪽 근거가 나옵니다</small></span>
+      <div class="ev-grid" id="myEv"></div>
+    </div>
+    <label class="f" for="worry">그래도 걱정되는 점 <small>내 입장의 약한 곳</small>
+      <input type="text" id="worry" data-k="worry" maxlength="60" placeholder="예: 폭우나 폭설 같은 상황">
+    </label>
+    <div class="f"><span>상대 근거 중 인정하는 것 <small>선택</small></span>
+      <div class="ev-grid" id="admitEv"></div>
+    </div>
+    <label class="f" for="hold">그래도 입장을 바꾸기 어려운 이유 <small>선택</small>
+      <input type="text" id="hold" data-k="hold" maxlength="60" placeholder="예: 눈 오는 골목에서 검증된 자료가 없기">
+    </label>
+    <label class="f" for="cond">이런 조건이 갖춰진다면 입장이 달라질 수 있다 <small>선택</small>
+      <input type="text" id="cond" data-k="cond" maxlength="60" placeholder="예: 우리 지역 날씨에서의 운행 자료 공개">
+    </label>
+    <div class="frames" aria-label="말하기 문장 틀">
+      <p id="f2a"></p><p id="f2b"></p><p id="f2c"></p><p id="f2d"></p>
+    </div>
+    <div class="row-actions"><button class="btn small" type="button" data-copy="2">복사</button><span class="hint">모둠에서 이 문장을 그대로 읽어도 됩니다.</span></div>
+  </section>
+
+  <!-- ③ 모둠 결론 -->
+  <section class="step" id="s3">
+    <div class="step-head"><div class="num">③</div><div>
+      <h2>모둠 결론 한 문장 <span class="when">1차시 활동 3</span></h2>
+      <p>모둠원 모두 1분씩 말한 뒤, 모둠의 결론을 한 문장으로 만듭니다. 한 사람만 올려도 됩니다.</p>
+    </div></div>
+    <label class="f" for="group">모둠 이름
+      <input type="text" id="group" data-k="group" maxlength="20" placeholder="예: 1모둠">
+    </label>
+    <div class="f"><span>결론을 낸 질문</span><div class="chips" id="gqChips"></div></div>
+    <label class="f" for="gConcl">모둠 결론 한 문장
+      <textarea id="gConcl" data-k="gConcl" maxlength="200" placeholder="예: 날씨·지역 조건별 검증 자료가 공개될 때까지는 제한된 구역에서만 허용해야 한다."></textarea>
+    </label>
+    <label class="f" for="gWhy">그 결론의 근거 <small>선택</small>
+      <input type="text" id="gWhy" data-k="gWhy" maxlength="80" placeholder="예: 온화한 도시에 한정된 데이터">
+    </label>
+    <div class="row-actions"><button class="btn small" type="button" data-copy="3">복사</button></div>
+  </section>
+
+  <!-- ④ 1차시 한 줄 -->
+  <section class="step" id="s4">
+    <div class="step-head"><div class="num">④</div><div>
+      <h2>1차시 한 줄 <span class="when">1차시 마무리</span></h2>
+      <p>오늘 가장 설득력 있다고 느낀 근거 하나와, 그 근거를 고른 이유입니다.</p>
+    </div></div>
+    <div class="f"><span>가장 설득력 있는 근거</span><div class="chips" id="bestChips"></div>
+      <input type="text" id="bestEtc" data-k="bestEtc" maxlength="60" placeholder="표에 없는 근거라면 직접 쓰기" aria-label="직접 쓴 근거">
+    </div>
+    <label class="f" for="bestWhy">고른 이유
+      <textarea id="bestWhy" data-k="bestWhy" maxlength="200" placeholder="예: 13배라는 숫자보다, 그 숫자가 어떤 조건에서 나왔는지가 더 중요하다고 느꼈다."></textarea>
+    </label>
+    <p class="hint" id="s4score"></p>
+    <div class="row-actions"><button class="btn small" type="button" data-copy="4">복사</button></div>
+  </section>
+
+  <!-- ⑤ 토론 주제 -->
+  <section class="step" id="s5">
+    <div class="step-head"><div class="num">⑤</div><div>
+      <h2>우리 반 토론 주제 한 문장 <span class="when">2차시 활동 3</span></h2>
+      <p>맡은 학년 칸에서 하나를 골라, 우리 반 아이들 말로 다듬습니다.</p>
+    </div></div>
+    <div class="f"><span>학년</span><div class="chips" id="gradeChips"></div></div>
+    <div class="f" id="issueWrap"><span>쟁점</span><div class="chips" id="issueChips"></div></div>
+    <div class="qbox" id="topicEx" hidden></div>
+    <div class="row-actions" id="topicCopyRow" hidden><button class="btn ghost small" type="button" id="useTopic">예시를 아래 칸에 가져와 고치기</button></div>
+    <label class="f" for="topic">우리 반 말로 다듬은 토론 주제
+      <textarea id="topic" data-k="topic" maxlength="200" placeholder="예: 우리 학교 통학버스를 운전자 없는 로봇 버스로 바꿔도 될까요?"></textarea>
+    </label>
+    <p class="hint">요령: 3~4학년은 강아지·통학버스 같은 생활 상황으로, 5~6학년은 숫자·조건·규칙을 따지는 근거 토론으로. 학년이 낮을수록 생명을 직접 고르는 질문은 피합니다.</p>
+    <div class="row-actions"><button class="btn small" type="button" data-copy="5">복사</button></div>
+  </section>
+
+  <!-- ⑥ 근거 카드 -->
+  <section class="step" id="s6">
+    <div class="step-head"><div class="num">⑥</div><div>
+      <h2>근거 카드 바꿔 쓰기 <span class="when">2차시 활동 4</span></h2>
+      <p>상황: “우리 학교 통학버스를 운전자 없는 로봇 버스로 바꾸자는 제안이 나왔어요.” 카드 한 장을 골라 우리 학교 상황에 맞게 바꿔 씁니다.</p>
+    </div></div>
+    <div class="f"><span>바꿔 쓸 카드</span><div class="ev-grid" id="sCards"></div></div>
+    <label class="f" for="cardText">우리 학교 버전 <small>우리 동네 골목, 등하교길, 날씨를 넣어 보세요</small>
+      <textarea id="cardText" data-k="cardText" maxlength="200" placeholder="카드를 고르면 원래 문장이 여기에 들어옵니다."></textarea>
+    </label>
+    <p class="hint">찬성 카드와 반대 카드 수를 같게 두면 교사의 입장이 드러나지 않습니다.</p>
+    <div class="row-actions"><button class="btn small" type="button" data-copy="6">복사</button></div>
+  </section>
+
+  <!-- ⑦ 다시 점수 -->
+  <section class="step" id="s7">
+    <div class="step-head"><div class="num">⑦</div><div>
+      <h2>지금은 몇 점입니까? <span class="when">2차시 정리</span></h2>
+      <p>같은 로봇 택시입니다. 처음 점수와 비교해 보고, 바뀐 이유나 그대로인 이유를 적습니다.</p>
+    </div></div>
+    <div class="f"><span>지금 점수</span>
+      <div class="scores" id="score2" role="group" aria-label="지금 점수"></div>
+      <div class="scale"><span>0 절대 안 탄다</span><span>10 망설임 없이 탄다</span></div>
+    </div>
+    <div class="compare" id="compare" aria-live="polite"></div>
+    <label class="f" for="reason2">바뀐 이유 / 안 바뀐 이유
+      <textarea id="reason2" data-k="reason2" maxlength="200" placeholder="예: 처음엔 그냥 불안했는데, 이제는 어떤 조건의 자료가 부족한지 말할 수 있다."></textarea>
+    </label>
+    <div class="row-actions"><button class="btn small" type="button" data-copy="7">복사</button></div>
+  </section>
+
+  <!-- 정리 카드 -->
+  <section id="sum" style="display:flex;flex-direction:column;gap:12px">
+    <div class="card" id="card">
+      <div class="card-head"><span>모듈 3 토론 노트</span><span id="cNick">닉네임</span></div>
+      <div class="card-body" id="cBody"></div>
+    </div>
+    <div class="row-actions">
+      <button class="btn" type="button" data-copy="all">전체 복사</button>
+      <button class="btn ghost" type="button" id="imgBtn">정리 카드 이미지 저장</button>
+      <a class="btn ghost" id="padletBtn" target="_blank" rel="noopener" hidden>패들렛 열기</a>
+      <button class="btn quiet" type="button" id="resetBtn">모두 지우기</button>
+    </div>
+    <div class="confirm" id="confirmBox" hidden>
+      <span>쓴 내용을 모두 지울까요? 처음 점수도 지워집니다.</span>
+      <button class="btn small" type="button" id="confirmYes">지우기</button>
+      <button class="btn ghost small" type="button" id="confirmNo">취소</button>
+    </div>
+    <textarea class="fallback" id="fallback" hidden aria-label="복사할 내용"></textarea>
+  </section>
+</div>
+<div class="status" id="status" role="status" aria-live="polite" hidden></div>
+
+<script>
+// 패들렛 주소를 정하면 여기에 넣으세요. 비어 있으면 '패들렛 열기' 버튼이 숨겨집니다.
+const PADLET_URL = "";
+const STORE_KEY = "module3-debate-v1";
+
+const QS = [
+  "통제된 도로 환경에서 얻은 안전 데이터만으로 비정형 엣지 케이스의 위험성을 해결할 수 있는가?",
+  "2050년 수십억 대 보급 전망 속에서, 전력망·인프라의 한계를 생각할 때 지금의 확산 속도는 적절한가?",
+  "생명윤리·트롤리 딜레마에 대한 사회적 합의 없이 상용화를 허용해도 되는가? 합의가 안 된다면 계속 보류해야 하는가?",
+];
+const EVID = [
+  { id: "p1", side: "pro", issue: "① 안전성 데이터", short: "2억 2천만 마일 실증과 사고 감소", full: "2억 2천만 마일 실증, 사망·중상 13배↓, 보행자 부상 92%↓ → 공중보건적 가치" },
+  { id: "c1", side: "con", issue: "① 안전성 데이터", short: "온화한 도시에 한정된 데이터", full: "온화한 도시(Fair-weather) 한정 데이터, 신차 vs 평균 12.8년 노후 차량의 불공정 비교" },
+  { id: "p2", side: "pro", issue: "② 인지 능력", short: "센서 퓨전의 정밀한 인식", full: "카메라+라이다+레이더 센서 퓨전 → 폭우·야간에도 mm 단위 3D 인식" },
+  { id: "c2", side: "con", issue: "② 인지 능력", short: "팬텀 브레이킹과 1% 예외 상황", full: "그림자를 장애물로 오인하는 팬텀 브레이킹, 비정형 도로의 1% 엣지 케이스" },
+  { id: "p3", side: "pro", issue: "③ 위기 대응과 책임", short: "0.1초 연산의 피해 극소화", full: "패닉 없는 0.1초 연산, 60km/h 충돌을 15km/h로 줄이는 피해 극소화" },
+  { id: "c3", side: "con", issue: "③ 위기 대응과 책임", short: "사고 책임의 공백", full: "실체적 물리 피해, 트롤리 딜레마의 현실화, 소유자·제조사·개발자 책임 공백" },
+];
+const SIDE = { pro: "찬성", con: "반대" };
+const SIDE_LONG = { pro: "찬성: 수용해도 된다", con: "반대: 아직 이르다" };
+const ISSUES = ["안전성 데이터", "인지 능력", "위기 대응·책임", "미래·인프라"];
+const TOPICS = {
+  "3~4학년": [
+    "로봇 버스가 사람 운전 버스보다 사고를 적게 냈대요. 그럼 우리 학교 통학버스도 로봇 버스로 바꿔도 될까요?",
+    "비 오는 밤, 로봇의 눈과 사람의 눈 중 누가 더 잘 볼까요? 로봇이 그림자를 보고 놀라서 급정거하면 어떡하죠?",
+    "로봇 차가 실수로 강아지를 다치게 했어요. 차 주인, 만든 회사, 프로그램을 짠 사람 중 누가 사과해야 할까요?",
+    "우리 동네에 로봇 차가 1,000대 생기면 좋은 점과 걱정되는 점을 말해 봐요.",
+  ],
+  "5~6학년": [
+    "로봇 택시가 13배 안전하다는 자료가 있다. 이 숫자만 믿고 우리 동네에 도입해도 되는가? (자료의 조건을 따져 보기)",
+    "99번 잘하고 1번 크게 실수하는 로봇 vs 가끔 작은 실수를 하는 사람, 누구에게 운전을 맡길까?",
+    "브레이크가 고장 난 로봇 차가 피할 수 없는 상황이라면, 미리 정해 둔 규칙은 무엇이어야 하는가? 그 규칙은 누가 정하는가?",
+    "2050년 로봇 차가 수십억 대가 되면 전기·도로·일자리는 어떻게 될까? 그래도 계속 늘려야 할까?",
+  ],
+  "1~2학년": ["로봇 통학버스가 길에서 강아지를 만나면 어떻게 해야 할까요? 멈출까요, 천천히 지나갈까요?"],
+};
+const SCARDS = [
+  { side: "pro", text: "로봇 버스는 졸지도, 딴짓도, 술을 마시지도 않아요." },
+  { side: "pro", text: "아주 많이 달려 봤고, 큰 사고가 사람보다 훨씬 적었어요." },
+  { side: "pro", text: "위험한 순간에 로봇은 0.1초 만에 브레이크 세기를 계산해요." },
+  { side: "con", text: "날씨 좋은 도시에서만 연습했어요. 눈 오는 우리 동네 골목은 처음이에요." },
+  { side: "con", text: "그림자를 돌멩이로 착각해 갑자기 멈추기도 해요." },
+  { side: "con", text: "사고가 나면 누가 책임지는지 아직 정해지지 않았어요." },
+];
+
+const $ = (id) => document.getElementById(id);
+const TEXT_KEYS = ["nick", "reason1", "worry", "hold", "cond", "group", "gConcl", "gWhy", "bestEtc", "bestWhy", "topic", "cardText", "reason2"];
+const EMPTY = { score1: null, score2: null, q: null, stance: null, myEv: null, admitEv: null, gq: null, best: null, grade: null, issue: null, sCard: null };
+let S = { ...EMPTY };
+TEXT_KEYS.forEach((k) => (S[k] = ""));
+
+// ---------- 한국어 조사 ----------
+function batchim(word) {
+  const s = (word || "").trim(); if (!s) return null;
+  const c = s.charCodeAt(s.length - 1);
+  if (c < 0xac00 || c > 0xd7a3) return null;
+  return (c - 0xac00) % 28;
+}
+const eun = (w) => { const b = batchim(w); return b === null ? "은/는" : b === 0 ? "는" : "은"; };
+const iga = (w) => { const b = batchim(w); return b === null ? "이/가" : b === 0 ? "가" : "이"; };
+const ev = (id) => EVID.find((e) => e.id === id);
+const t = (k) => (S[k] || "").trim();
+
+// ---------- 입력 만들기 ----------
+function buildScores(boxId, key) {
+  const box = $(boxId);
+  for (let n = 0; n <= 10; n++) {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "score"; b.textContent = n; b.dataset.v = n;
+    b.setAttribute("aria-label", n + "점");
+    b.addEventListener("click", () => { S[key] = S[key] === n ? null : n; render(); });
+    box.appendChild(b);
+  }
+}
+function buildChips(boxId, items, key, cls) {
+  const box = $(boxId); box.textContent = "";
+  items.forEach(([val, label, extra]) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip" + (extra ? " " + extra : cls ? " " + cls : ""); b.textContent = label; b.dataset.v = val;
+    b.addEventListener("click", () => { S[key] = S[key] === val ? null : val; onChip(key); render(); });
+    box.appendChild(b);
+  });
+}
+function onChip(key) {
+  if (key === "stance") { if (S.myEv && ev(S.myEv).side !== S.stance) S.myEv = null; if (S.admitEv && ev(S.admitEv).side === S.stance) S.admitEv = null; }
+  if (key === "grade") { S.issue = S.grade === "1~2학년" ? 0 : null; }
+}
+
+buildScores("score1", "score1");
+buildScores("score2", "score2");
+buildChips("qChips", QS.map((_, i) => [i, "Q" + (i + 1)]), "q");
+buildChips("gqChips", QS.map((_, i) => [i, "Q" + (i + 1)]), "gq");
+buildChips("stanceChips", [["pro", "찬성: 수용해도 된다", "pro"], ["con", "반대: 아직 이르다", "con"]], "stance");
+buildChips("bestChips", EVID.map((e) => [e.id, SIDE[e.side] + " · " + e.short, e.side]), "best");
+buildChips("gradeChips", Object.keys(TOPICS).map((g) => [g, g]), "grade");
+buildChips("issueChips", ISSUES.map((x, i) => [i, x]), "issue");
+
+// <표 1>
+(function buildTable() {
+  const tb = $("t1");
+  const head = document.createElement("tr");
+  ["쟁점", SIDE_LONG.pro, SIDE_LONG.con].forEach((h) => { const th = document.createElement("th"); th.textContent = h; head.appendChild(th); });
+  tb.appendChild(head);
+  for (let i = 0; i < 3; i++) {
+    const tr = document.createElement("tr");
+    const p = EVID[i * 2], c = EVID[i * 2 + 1];
+    [p.issue, p.full, c.full].forEach((x) => { const td = document.createElement("td"); td.textContent = x; tr.appendChild(td); });
+    tb.appendChild(tr);
+  }
+})();
+
+// 근거 카드 버튼 목록
+function renderEvGrid(boxId, list, key, emptyMsg) {
+  const box = $(boxId); box.textContent = "";
+  if (!list.length) { const p = document.createElement("p"); p.className = "ev-empty"; p.textContent = emptyMsg; box.appendChild(p); return; }
+  list.forEach((e) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "ev " + e.side; b.setAttribute("aria-pressed", String(S[key] === e.id));
+    const iss = document.createElement("span"); iss.className = "iss";
+    const tag = document.createElement("span"); tag.className = "side-tag " + e.side; tag.textContent = SIDE[e.side];
+    iss.append(tag, e.issue);
+    const sh = document.createElement("span"); sh.className = "sh"; sh.textContent = e.short;
+    const fu = document.createElement("span"); fu.className = "fu"; fu.textContent = e.full;
+    b.append(iss, sh, fu);
+    b.addEventListener("click", () => { S[key] = S[key] === e.id ? null : e.id; render(); });
+    box.appendChild(b);
+  });
+}
+function renderStudentCards() {
+  const box = $("sCards"); box.textContent = "";
+  SCARDS.forEach((c, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "ev " + c.side; b.setAttribute("aria-pressed", String(S.sCard === i));
+    const iss = document.createElement("span"); iss.className = "iss";
+    const tag = document.createElement("span"); tag.className = "side-tag " + c.side; tag.textContent = SIDE[c.side] + " 카드";
+    iss.append(tag);
+    const sh = document.createElement("span"); sh.className = "sh"; sh.textContent = c.text;
+    b.append(iss, sh);
+    b.addEventListener("click", () => {
+      const prev = S.sCard;
+      S.sCard = prev === i ? null : i;
+      // 비어 있거나 원래 카드 문장 그대로일 때만 새 카드 문장으로 바꿉니다.
+      const cur = t("cardText");
+      if (S.sCard !== null && (!cur || SCARDS.some((x) => x.text === cur))) { S.cardText = SCARDS[i].text; $("cardText").value = S.cardText; }
+      render();
+    });
+    box.appendChild(b);
+  });
+}
+
+// ---------- 문장 만들기 ----------
+function setFrame(el, parts) {
+  el.textContent = "";
+  parts.forEach((p) => {
+    if (typeof p === "string") { el.append(p); return; }
+    const span = document.createElement("span");
+    if (p.v) { span.className = "fill"; span.textContent = p.v; } else { span.className = "blank"; span.textContent = "      "; }
+    el.append(span);
+  });
+}
+function frames2() {
+  const my = S.myEv ? ev(S.myEv).short : "", ad = S.admitEv ? ev(S.admitEv).short : "";
+  const st = S.stance ? SIDE[S.stance] : "";
+  return [
+    ["“저는 ", { v: st }, "합니다. 왜냐하면 ", { v: my }, " 근거가 가장 설득력 있었기 때문입니다.”"],
+    ["“다만 ", { v: t("worry") }, t("worry") ? iga(t("worry")) : "이/가", " 걱정됩니다.”"],
+    ["“상대 근거 중 ", { v: ad }, ad ? eun(ad) : "은/는", " 인정하지만, ", { v: t("hold") }, " 때문에 아직 제 입장을 바꾸긴 어렵습니다.”"],
+    ["“만약 ", { v: t("cond") }, " 조건이 갖춰진다면 제 입장은 달라질 수 있습니다.”"],
+  ];
+}
+function plain(parts) { return parts.map((p) => (typeof p === "string" ? p : p.v || "___")).join(""); }
+function bestLabel() { return S.best ? ev(S.best).short : t("bestEtc"); }
+function topicExample() { if (!S.grade || S.issue === null) return ""; return (TOPICS[S.grade] || [])[S.issue] || ""; }
+function deltaText() {
+  if (S.score1 === null || S.score2 === null) return "";
+  const d = S.score2 - S.score1;
+  return d === 0 ? "그대로" : d > 0 ? `▲${d}점 올라감` : `▼${-d}점 내려감`;
+}
+
+// ---------- 화면 갱신 ----------
+function render() {
+  document.querySelectorAll("#score1 .score").forEach((b) => b.setAttribute("aria-pressed", String(S.score1 === +b.dataset.v)));
+  document.querySelectorAll("#score2 .score").forEach((b) => b.setAttribute("aria-pressed", String(S.score2 === +b.dataset.v)));
+  const pressChips = (boxId, key) => document.querySelectorAll(`#${boxId} .chip`).forEach((b) => {
+    const val = isNaN(+b.dataset.v) || b.dataset.v === "" ? b.dataset.v : +b.dataset.v;
+    b.setAttribute("aria-pressed", String(S[key] === val));
+  });
+  [["qChips", "q"], ["gqChips", "gq"], ["stanceChips", "stance"], ["bestChips", "best"], ["gradeChips", "grade"], ["issueChips", "issue"]].forEach(([b, k]) => pressChips(b, k));
+
+  // 질문 상자
+  const qb = $("qbox"); qb.textContent = "";
+  QS.forEach((q, i) => { const p = document.createElement("p"); const b = document.createElement("b"); b.textContent = "Q" + (i + 1) + " "; p.append(b, q); if (S.q !== null && S.q !== i) p.style.opacity = ".45"; qb.appendChild(p); });
+
+  const mine = S.stance ? EVID.filter((e) => e.side === S.stance) : [];
+  const other = S.stance ? EVID.filter((e) => e.side !== S.stance) : [];
+  renderEvGrid("myEv", mine, "myEv", "위에서 찬성·반대를 먼저 고르세요.");
+  renderEvGrid("admitEv", other, "admitEv", "입장을 고르면 상대편 근거가 나옵니다.");
+  const fr = frames2();
+  ["f2a", "f2b", "f2c", "f2d"].forEach((id, i) => setFrame($(id), fr[i]));
+
+  $("s4score").textContent = S.score1 !== null ? `처음 택시 점수: ${S.score1}점 (①에서 가져옴)` : "①에서 처음 점수를 고르면 여기에 함께 적힙니다.";
+
+  $("issueWrap").hidden = S.grade === "1~2학년";
+  const ex = topicExample();
+  $("topicEx").hidden = !ex; $("topicCopyRow").hidden = !ex;
+  $("topicEx").textContent = ex ? "예시: “" + ex + "”" : "";
+
+  renderStudentCards();
+
+  // 점수 비교
+  const cmp = $("compare"); cmp.textContent = "";
+  const box = (lab, val) => { const d = document.createElement("div"); const l = document.createElement("div"); l.className = "lab"; l.textContent = lab; const v = document.createElement("div"); v.className = "big"; v.textContent = val === null ? "?" : val; d.append(l, v); return d; };
+  const arrow = document.createElement("span"); arrow.className = "arrow"; arrow.textContent = "→";
+  const dl = document.createElement("span"); dl.className = "delta"; dl.textContent = deltaText() || (S.score1 === null ? "①에서 처음 점수를 고르지 않았습니다" : "지금 점수를 고르세요");
+  cmp.append(box("처음", S.score1), arrow, box("지금", S.score2), dl);
+
+  // 단계 표시
+  const done = { 1: S.score1 !== null, 2: !!(S.stance && S.myEv), 3: !!t("gConcl"), 4: !!(bestLabel() && t("bestWhy")), 5: !!t("topic"), 6: !!t("cardText"), 7: S.score2 !== null };
+  document.querySelectorAll("nav.steps a").forEach((a) => a.classList.toggle("done", !!done[a.dataset.s]));
+
+  renderCard();
+  save();
+}
+
+function rows() {
+  const r = [];
+  const nickTxt = t("nick") || "닉네임";
+  r.push(["처음 점수", S.score1 === null ? "-" : `${S.score1}점${t("reason1") ? " · " + t("reason1") : ""}`]);
+  if (S.stance || S.myEv) r.push(["내 입장" + (S.q !== null ? ` (Q${S.q + 1})` : ""), frames2().map(plain).join("\n")]);
+  if (t("gConcl")) r.push([`모둠 결론${t("group") ? " · " + t("group") : ""}${S.gq !== null ? ` (Q${S.gq + 1})` : ""}`, t("gConcl") + (t("gWhy") ? "\n근거: " + t("gWhy") : "")]);
+  if (bestLabel() || t("bestWhy")) r.push(["1차시 한 줄", `가장 설득력 있는 근거: ${bestLabel() || "-"}\n${t("bestWhy")}`.trim()]);
+  if (t("topic")) r.push([`우리 반 토론 주제${S.grade ? " · " + S.grade : ""}`, t("topic")]);
+  if (t("cardText")) r.push([`바꿔 쓴 근거 카드${S.sCard !== null ? " · " + SIDE[SCARDS[S.sCard].side] : ""}`, t("cardText")]);
+  r.push(["다시 매긴 점수", S.score2 === null ? "-" : `${S.score1 === null ? "?" : S.score1}점 → ${S.score2}점 (${deltaText() || "-"})${t("reason2") ? "\n" + t("reason2") : ""}`]);
+  return { nick: nickTxt, rows: r };
+}
+function renderCard() {
+  const { nick, rows: r } = rows();
+  $("cNick").textContent = nick;
+  const body = $("cBody"); body.textContent = "";
+  r.forEach(([k, v]) => {
+    const d = document.createElement("div");
+    const kk = document.createElement("div"); kk.className = "row-k"; kk.textContent = k;
+    const vv = document.createElement("div"); vv.className = "row-v"; vv.textContent = v;
+    d.append(kk, vv); body.appendChild(d);
+  });
+}
+
+// ---------- 복사 글 ----------
+function sectionText(n) {
+  const nick = t("nick") || "닉네임";
+  switch (n) {
+    case "1": return `[모듈3 ① 처음 점수] ${nick}\n로봇 택시: ${S.score1 === null ? "?" : S.score1}점\n이유: ${t("reason1") || "-"}`;
+    case "2": {
+      const my = S.myEv ? ev(S.myEv) : null;
+      return [`[모듈3 ② 내 입장] ${nick}${S.q !== null ? ` · Q${S.q + 1}` : ""}`, ...frames2().map(plain), my ? `(근거: ${my.issue} · ${my.full})` : ""].filter(Boolean).join("\n");
+    }
+    case "3": return `[모듈3 ③ 모둠 결론] ${t("group") || nick}${S.gq !== null ? ` · Q${S.gq + 1}` : ""}\n${t("gConcl") || "-"}${t("gWhy") ? "\n근거: " + t("gWhy") : ""}`;
+    case "4": return `[모듈3 ④ 1차시 한 줄] ${nick}\n가장 설득력 있는 근거: ${bestLabel() || "-"}\n이유: ${t("bestWhy") || "-"}${S.score1 !== null ? `\n(처음 택시 점수 ${S.score1}점)` : ""}`;
+    case "5": return `[모듈3 ⑤ 우리 반 토론 주제] ${nick}${S.grade ? " · " + S.grade : ""}\n${t("topic") || "-"}`;
+    case "6": return `[모듈3 ⑥ 근거 카드 바꿔 쓰기] ${nick}${S.sCard !== null ? ` · ${SIDE[SCARDS[S.sCard].side]} 카드` : ""}\n${S.sCard !== null ? "원래: " + SCARDS[S.sCard].text + "\n바꿈: " : ""}${t("cardText") || "-"}`;
+    case "7": return `[모듈3 ⑦ 다시 매긴 점수] ${nick}\n처음 ${S.score1 === null ? "?" : S.score1}점 → 지금 ${S.score2 === null ? "?" : S.score2}점 (${deltaText() || "-"})\n이유: ${t("reason2") || "-"}`;
+    default: {
+      const { nick: nn, rows: r } = rows();
+      return [`[모듈3 토론 노트] ${nn}`, ...r.map(([k, v]) => `■ ${k}\n${v}`)].join("\n\n");
+    }
+  }
+}
+
+// ---------- 저장 ----------
+function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) {} }
+function load() {
+  try { const raw = localStorage.getItem(STORE_KEY); if (raw) S = { ...S, ...JSON.parse(raw) }; } catch (e) {}
+  TEXT_KEYS.forEach((k) => ($(k).value = S[k] || ""));
+  render();
+}
+document.querySelectorAll("[data-k]").forEach((el) => el.addEventListener("input", () => { S[el.dataset.k] = el.value; if (el.dataset.k === "bestEtc" && el.value.trim()) S.best = null; render(); }));
+
+$("useTopic").addEventListener("click", () => { const ex = topicExample(); if (ex) { S.topic = ex; $("topic").value = ex; $("topic").focus(); render(); } });
+
+// ---------- 버튼 ----------
+let flashTimer;
+function flash(msg) { const s = $("status"); s.textContent = msg; s.hidden = false; clearTimeout(flashTimer); flashTimer = setTimeout(() => (s.hidden = true), 4000); }
+function copyText(text) {
+  const fb = $("fallback");
+  const showFallback = () => { fb.hidden = false; fb.value = text; fb.scrollIntoView({ block: "center" }); fb.focus(); fb.select(); flash("자동 복사가 막혀 있습니다. 선택된 글을 Ctrl+C(또는 길게 눌러 복사)로 복사하세요."); };
+  try { navigator.clipboard.writeText(text).then(() => { fb.hidden = true; flash("복사했습니다. 패들렛 해당 칸에 붙여넣으세요."); }, showFallback); }
+  catch (e) { showFallback(); }
+}
+document.querySelectorAll("[data-copy]").forEach((b) => b.addEventListener("click", () => copyText(sectionText(b.dataset.copy))));
+
+$("resetBtn").addEventListener("click", () => { $("confirmBox").hidden = false; $("confirmNo").focus(); });
+$("confirmNo").addEventListener("click", () => { $("confirmBox").hidden = true; });
+$("confirmYes").addEventListener("click", () => {
+  $("confirmBox").hidden = true;
+  const nick = S.nick;
+  S = { ...EMPTY }; TEXT_KEYS.forEach((k) => (S[k] = "")); S.nick = nick;
+  TEXT_KEYS.forEach((k) => ($(k).value = S[k]));
+  $("fallback").hidden = true; render(); flash("모두 지웠습니다. 닉네임만 남겨 두었습니다.");
+});
+if (PADLET_URL) { $("padletBtn").href = PADLET_URL; $("padletBtn").hidden = false; }
+
+// ---------- 정리 카드 이미지 ----------
+function wrapLines(ctx, text, maxW) {
+  const out = [];
+  String(text).split("\n").forEach((para) => {
+    let line = "";
+    for (const ch of para) { if (ctx.measureText(line + ch).width > maxW && line) { out.push(line); line = ch.trimStart(); } else line += ch; }
+    out.push(line);
+  });
+  return out;
+}
+async function drawCard() {
+  try { await document.fonts.ready; } catch (e) {}
+  const W = 1080, P = 64, inner = W - P * 2;
+  const font = '"Noto Sans KR", "Malgun Gothic", sans-serif';
+  const navy = "#003c82", sky = "#e4eef8", red = "#c0392b", ink = "#14223a";
+  const { nick, rows: r } = rows();
+  const meas = document.createElement("canvas").getContext("2d");
+  meas.font = `500 32px ${font}`;
+  const laid = r.map(([k, v]) => [k, wrapLines(meas, v, inner)]);
+  const scoreBlock = 150;
+  let h = 120 + 40 + scoreBlock + 30;
+  laid.forEach(([, ls]) => (h += 38 + ls.length * 46 + 24));
+  h += P - 24;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = Math.ceil(h);
+  const ctx = cv.getContext("2d");
+  ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, h);
+  ctx.fillStyle = navy; ctx.fillRect(0, 0, W, 120);
+  ctx.fillStyle = "#ffffff"; ctx.textBaseline = "middle";
+  ctx.font = `700 40px ${font}`; ctx.fillText("모듈 3 토론 노트", P, 60);
+  ctx.font = `500 32px ${font}`; ctx.textAlign = "right"; ctx.fillText(nick, W - P, 60);
+  // 점수 비교 띠
+  let y = 160;
+  ctx.fillStyle = sky; ctx.fillRect(P, y, inner, scoreBlock);
+  ctx.textAlign = "center"; ctx.fillStyle = navy;
+  ctx.font = `700 24px ${font}`; ctx.fillText("처음", P + 150, y + 40); ctx.fillText("지금", P + 450, y + 40);
+  ctx.font = `900 64px ${font}`;
+  ctx.fillText(S.score1 === null ? "?" : String(S.score1), P + 150, y + 98);
+  ctx.fillText(S.score2 === null ? "?" : String(S.score2), P + 450, y + 98);
+  ctx.fillStyle = ink; ctx.font = `500 48px ${font}`; ctx.fillText("→", P + 300, y + 95);
+  ctx.textAlign = "left"; ctx.font = `700 32px ${font}`; ctx.fillStyle = red;
+  ctx.fillText(deltaText() || "", P + 600, y + 80);
+  y += scoreBlock + 30;
+  ctx.textBaseline = "top";
+  laid.forEach(([k, ls]) => {
+    ctx.fillStyle = navy; ctx.font = `700 26px ${font}`; ctx.fillText(k, P, y); y += 38;
+    ctx.fillStyle = ink; ctx.font = `500 32px ${font}`;
+    ls.forEach((l) => { ctx.fillText(l, P, y); y += 46; });
+    y += 24;
+  });
+  ctx.strokeStyle = navy; ctx.lineWidth = 6; ctx.strokeRect(3, 3, W - 6, h - 6);
+  return new Promise((res) => cv.toBlob(res, "image/png"));
+}
+async function saveImage(blob, filename) {
+  if (window.claude && typeof window.claude.use === "function") {
+    try { const dl = await window.claude.use("downloads"); if (dl) { await dl.save({ filename, data: blob }); return; } } catch (e) { if (e && e.code === "declined") throw e; }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+$("imgBtn").addEventListener("click", async () => {
+  try {
+    const blob = await drawCard();
+    await saveImage(blob, "모듈3_토론노트_" + (t("nick") || "활동지").replace(/[\\/:*?"<>|]/g, "") + ".png");
+    flash("이미지를 저장했습니다. 패들렛 게시물에 첨부하세요.");
+  } catch (e) { flash(e && e.code === "declined" ? "저장을 취소했습니다." : "이미지를 저장하지 못했습니다. 카드를 화면 캡처해 올려 주세요."); }
+});
+
+load();
+</script>
+</body>
+</html>
